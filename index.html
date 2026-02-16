@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sorting Visualizer - Sakshi</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .controls {
+            margin: 20px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #38bdf8;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+        }
+
+        input {
+            margin: 5px;
+        }
+
+        #array {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 400px;
+            width: 90%;
+            margin: 20px auto;
+            border: 2px solid #38bdf8;
+        }
+
+        .bar {
+            background: cyan;
+            margin: 0 1px;
+            transition: height 0.2s ease, background 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sorting Visualizer</h1>
+
+    <div class="controls">
+        <button onclick="generateArray()">Generate</button>
+        <button onclick="bubbleSort()">Bubble Sort</button>
+        <button onclick="selectionSort()">Selection Sort</button>
+        <br>
+        Size:
+        <input type="range" id="sizeSlider" min="10" max="100" value="40">
+        Speed:
+        <input type="range" id="speedSlider" min="10" max="300" value="100">
+    </div>
+
+    <div id="array"></div>
+
+    <script>
+        let array = [];
+        const container = document.getElementById("array");
+        const sizeSlider = document.getElementById("sizeSlider");
+        const speedSlider = document.getElementById("speedSlider");
+
+        function generateArray() {
+            container.innerHTML = "";
+            array = [];
+
+            let size = sizeSlider.value;
+
+            for (let i = 0; i < size; i++) {
+                let value = Math.floor(Math.random() * 350) + 20;
+                array.push(value);
+
+                let bar = document.createElement("div");
+                bar.classList.add("bar");
+                bar.style.height = value + "px";
+                bar.style.width = (800 / size) + "px";
+
+                container.appendChild(bar);
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function bubbleSort() {
+            let bars = document.getElementsByClassName("bar");
+            let speed = 310 - speedSlider.value;
+
+            for (let i = 0; i < array.length - 1; i++) {
+                for (let j = 0; j < array.length - i - 1; j++) {
+
+                    bars[j].style.background = "red";
+                    bars[j + 1].style.background = "red";
+
+                    await sleep(speed);
+
+                    if (array[j] > array[j + 1]) {
+                        let temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+
+                        bars[j].style.height = array[j] + "px";
+                        bars[j + 1].style.height = array[j + 1] + "px";
+                    }
+
+                    bars[j].style.background = "cyan";
+                    bars[j + 1].style.background = "cyan";
+                }
+
+                bars[array.length - i - 1].style.background = "green";
+            }
+        }
+
+        async function selectionSort() {
+            let bars = document.getElementsByClassName("bar");
+            let speed = 310 - speedSlider.value;
+
+            for (let i = 0; i < array.length; i++) {
+                let minIndex = i;
+                bars[minIndex].style.background = "yellow";
+
+                for (let j = i + 1; j < array.length; j++) {
+                    bars[j].style.background = "red";
+                    await sleep(speed);
+
+                    if (array[j] < array[minIndex]) {
+                        bars[minIndex].style.background = "cyan";
+                        minIndex = j;
+                        bars[minIndex].style.background = "yellow";
+                    } else {
+                        bars[j].style.background = "cyan";
+                    }
+                }
+
+                let temp = array[i];
+                array[i] = array[minIndex];
+                array[minIndex] = temp;
+
+                bars[i].style.height = array[i] + "px";
+                bars[minIndex].style.height = array[minIndex] + "px";
+
+                bars[minIndex].style.background = "cyan";
+                bars[i].style.background = "green";
+            }
+        }
+
+        generateArray();
+    </script>
+
+</body>
+</html>
